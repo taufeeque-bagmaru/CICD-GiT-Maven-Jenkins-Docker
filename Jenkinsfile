@@ -28,7 +28,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker run -d --name mycontainer myapp'
+                sh 'docker run -d --name mycontainer1 myapp'
             }
         }
     }
