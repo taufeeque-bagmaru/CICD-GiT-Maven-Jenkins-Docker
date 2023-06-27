@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        registry = "public.ecr.aws/q8d8q2l8/my-docker-repo"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -26,16 +30,29 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Push to into ECR') {
             steps {
-                sh 'docker run -d -p 8090:8080 --name mycontainer6 myapp'
+                sh 'aws ecr-public get-login-password --region ap-south-1 | docker login --username AWS --password-stdin public.ecr.aws/q8d8q2l8'
+                sh 'docker push public.ecr.aws/q8d8q2l8/my-docker-repo:latest'
             }
         }
-    }
+
+        stage('k8 deploy') {
+            step { 
+                withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                }
+            }
+        }
+                
+            
+
 
     post {
         always {
             deleteDir()
         }
     }
+}
 }
