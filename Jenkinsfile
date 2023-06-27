@@ -38,7 +38,7 @@ pipeline {
         }
 
         stage('k8 deploy') {
-            step { 
+            steps { 
                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
                     sh 'kubectl apply -f deployment.yaml'
                     sh 'kubectl apply -f service.yaml'
@@ -46,7 +46,7 @@ pipeline {
             }
         }
                 
-            
+    }       
 
 
     post {
@@ -54,5 +54,4 @@ pipeline {
             deleteDir()
         }
     }
-}
 }
