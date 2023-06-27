@@ -33,6 +33,7 @@ pipeline {
         stage('Push to into ECR') {
             steps {
                 sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/q8d8q2l8'
+                sh 'docker tag myapp public.ecr.aws/q8d8q2l8/my-docker-repo:latest'
                 sh 'docker push public.ecr.aws/q8d8q2l8/my-docker-repo:latest'
             }
         }
